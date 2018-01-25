@@ -87,18 +87,23 @@ namespace TrainingKitPackager
             {
                 Link =
                    @"function(href, title, text){
-                   //Determine if relative url
-                   if(!/^(https?:)\w+/.test(href) &&
-                    //Filter out links to in-page anchors
-                    href.charAt(0) !== '#' &&
-                    //Filter out URLs with file extensions
-                   	href.slice(href.lastIndexOf('/')).lastIndexOf('.') < 0) {
-                       //Ensure path ends with /
-                       if(!/\/$/.test(href)) {
-                             href += '/';
+                       //Determine if relative url
+                       if(!/^(https?:)\w+/.test(href)) {
+                         //Filter out links to in-page anchors
+                         if(href.charAt(0) !== '#') {
+                           //Ensure relative urls to folders end with /readme.htm
+                   	       if(href.slice(href.lastIndexOf('/')).lastIndexOf('.') < 0) {
+                             //Ensure path ends with /
+                             if(!/\/$/.test(href)) {
+                               href += '/';
+                             }
+                             href += 'readme.htm';
+                           // Otherwise, for relative URLs ending with .md, replace .md with .htm
+                           } else if (href.toLowerCase().lastIndexOf('.md') == href.length - 3) {
+                             href = href.replace('.md','.htm');
+                           }
+                         }
                        }
-                       href += 'readme.htm';
-                     }
 
                      var out = marked.Renderer.prototype.link.apply(this, arguments);
                      return out; 
